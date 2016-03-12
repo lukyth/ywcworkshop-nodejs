@@ -12,8 +12,9 @@ var database = {
   ]
 }
 
-function UserList () {
-}
+function UserList () {}
+
+util.inherits(UserList, EventEmitter)
 
 UserList.prototype.save = function (obj) {
   obj.id = id++
@@ -24,8 +25,6 @@ UserList.prototype.save = function (obj) {
 UserList.prototype.all = function () {
   return database.users
 }
-
-util.inherits(UserList, EventEmitter)
 
 var users = new UserList()
 
