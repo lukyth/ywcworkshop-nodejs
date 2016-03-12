@@ -7,8 +7,8 @@ let options = {
   highWaterMark: 1
 }
 
-let readStream = fs.createReadStream('lowercase.txt', options)
-let writeStream = fs.createWriteStream('uppercase.txt', options)
+let readStream = fs.createReadStream(`${__dirname}/lowercase.txt`, options)
+let writeStream = fs.createWriteStream(`${__dirname}/uppercase.txt`, options)
 
 readStream.on('data', (chunk) => {
   writeStream.write(chunk.toUpperCase())
