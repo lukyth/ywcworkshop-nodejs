@@ -1,13 +1,13 @@
 'use strict'
 
-let fs = require('fs')
-let zlib = require('zlib')
+const fs = require('fs')
+const zlib = require('zlib')
 
-let readable = fs.createReadStream(`${__dirname}/hello.txt`)
-let writeable = fs.createWriteStream(`${__dirname}/hellocopy.txt`)
-let compressed = fs.createWriteStream(`${__dirname}/hellocopy.txt.gz`)
+const readable = fs.createReadStream(`${__dirname}/hello.txt`)
+const writeable = fs.createWriteStream(`${__dirname}/hellocopy.txt`)
+const compressed = fs.createWriteStream(`${__dirname}/hellocopy.txt.gz`)
 
-let gzip = zlib.createGzip()
+const gzip = zlib.createGzip()
 
 readable.pipe(writeable)
 readable.pipe(gzip).pipe(compressed)

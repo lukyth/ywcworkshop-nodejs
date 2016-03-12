@@ -11,18 +11,18 @@ const database = {
   ]
 }
 
-class UserList extends EventEmitter{
-  constructor() {
+class UserList extends EventEmitter {
+  constructor () {
     super()
   }
 
-  save(obj) {
+  save (obj) {
     obj.id = id++
     database.users.push(obj)
     this.emit('saved-user', obj)
   }
 
-  all() {
+  all () {
     return database.users
   }
 }
