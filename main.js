@@ -1,24 +1,36 @@
 'user strict'
 
-const EventEmitter = require('events')
-const ee = new EventEmitter()
+var util = require('util')
+var EventEmitter = require('events').EventEmitter
 
-ee.on('hello', (user) => {
-  console.log(`Found new user
-username: ${user.username}
-email: ${user.email}`)
+var id = 1
+var database = {
+  users: [
+    { id: id++, name: 'John Doe', job: 'design'},
+    { id: id++, name: 'Mary Doe', job: 'programming'},
+    { id: id++, name: 'Tom Doe', job: 'marketing'},
+  ]
+}
+
+function UserList () {
+}
+
+UserList.prototype.save = function (obj) {
+  obj.id = id++
+  database.users.push(obj)
+  this.emit('saved-user', obj)
+}
+
+UserList.prototype.all = function () {
+  return database.users
+}
+
+util.inherits(UserList, EventEmitter)
+
+var users = new UserList()
+
+users.on('saved-user', function () {
+  console.log(users.all())
 })
 
-ee.once('hello_once', () => {
-  console.log('This should appear once')
-})
-
-ee.emit('hello', {
-  username: "lukyth",
-  email: "k.sujautra@gmail.com"
-})
-
-ee.emit('hello_once')
-ee.emit('hello_once')
-ee.emit('hello_once')
-ee.emit('hello_once')
+users.save({ name: 'Kid', job: 'sleeper'})
