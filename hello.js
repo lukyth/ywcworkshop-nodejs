@@ -14,8 +14,8 @@ ee.once('hello_once', () => {
 })
 
 ee.emit('hello', {
-  username: "lukyth",
-  email: "k.sujautra@gmail.com"
+  username: 'lukyth',
+  email: 'k.sujautra@gmail.com'
 })
 
 ee.emit('hello_once')
