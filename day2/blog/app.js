@@ -16,22 +16,74 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/post', (req, res) => {
-  db.post.find().toArray(function (err, posts) {
+  db.post.find().toArray((err, posts) => {
     if (err) {
-      res.status(400).end()
+      return res.status(500).json(err)
     }
     res.status(200).json(posts)
   })
 })
 
 app.post('/post', (req, res) => {
-  db.post.insert(req.body)
-  res.redirect('/post')
+  const insertData = {
+    title: req.body.title,
+    body: req.body.body,
+    author: req.body.author,
+    email: req.body.email
+  }
+
+  if (insertData.title.length < 5) {
+    return res.status(500).send('Title too short.')
+  }
+
+  db.post.insert(insertData, (err, result) => {
+    if (err) {
+      console.error(err.stack)
+      return res.status(500).json(err)
+    }
+    res.status(200).send(result)
+    // res.redirect('/post')
+  })
+})
+
+app.put('/post/:id', (req, res) => {
+  const id = req.params.id
+  const insertData = {
+    $set: {
+      title: req.body.title,
+      body: req.body.body
+    }
+  }
+
+  if (req.body.title.length < 5) {
+    return res.status(500).send('Title too short.')
+  }
+
+  db.post.updateById(id, insertData, (err, result) => {
+    if (err) {
+      console.error(err.stack)
+      return res.status(500).json(err)
+    }
+    res.status(200).send(result)
+    // res.redirect('/post')
+  })
+})
+
+app.delete('/post/:title', (req, res) => {
+  const title = req.params.title
+  db.post.remove({title: title}, (err, result) => {
+    if (err) {
+      console.error(err.stack)
+      return res.status(500).json(err)
+    }
+    res.status(200).json(result)
+  })
 })
 
 process.on('SIGTERM', () => {
   db.close()
   console.log('Closing DB')
+  process.exit()
 })
 
 module.exports = app
