@@ -9,10 +9,6 @@ const app = express()
 const db = mongo.db('mongodb://localhost:27017/blog', {native_parser: true})
 db.bind('post')
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'jade')
-
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -26,6 +22,11 @@ app.get('/post', (req, res) => {
     }
     res.status(200).json(posts)
   })
+})
+
+app.post('/post', (req, res) => {
+  db.post.insert(req.body)
+  res.redirect('/post')
 })
 
 process.on('SIGTERM', () => {
