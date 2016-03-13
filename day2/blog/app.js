@@ -6,8 +6,13 @@ const bodyParser = require('body-parser')
 const mongo = require('mongoskin')
 
 const app = express()
+
 const db = mongo.db('mongodb://localhost:27017/blog', {native_parser: true})
 db.bind('post')
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'jade')
 
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -15,12 +20,16 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
+app.get('/', (req, res) => {
+  res.render('index')
+})
+
 app.get('/post', (req, res) => {
   db.post.find().toArray((err, posts) => {
     if (err) {
       return res.status(500).json(err)
     }
-    res.status(200).json(posts)
+    res.render('post', {posts: posts})
   })
 })
 
@@ -42,7 +51,7 @@ app.post('/post', (req, res) => {
       return res.status(500).json(err)
     }
     res.status(200).send(result)
-    // res.redirect('/post')
+  // res.redirect('/post')
   })
 })
 
@@ -65,7 +74,7 @@ app.put('/post/:id', (req, res) => {
       return res.status(500).json(err)
     }
     res.status(200).send(result)
-    // res.redirect('/post')
+  // res.redirect('/post')
   })
 })
 
@@ -77,6 +86,37 @@ app.delete('/post/:title', (req, res) => {
       return res.status(500).json(err)
     }
     res.status(200).json(result)
+  })
+})
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  var err = new Error('Not Found')
+  err.status = 404
+  next(err)
+})
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function (err, req, res, next) {
+    res.status(err.status || 500)
+    res.render('error', {
+      message: err.message,
+      error: err
+    })
+  })
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500)
+  res.render('error', {
+    message: err.message,
+    error: {}
   })
 })
 

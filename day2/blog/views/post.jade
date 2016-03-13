@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1 All posts
+  #container.col
+    each post in posts
+      h2 #{post.title}
+      p #{post.body}
+      p Author: #{post.author}
+      p Email: #{post.email}
+      hr
